@@ -1,7 +1,7 @@
 {\rtf1\ansi\ansicpg949\cocoartf2869
 \cocoatextscaling0\cocoaplatform0{\fonttbl\f0\froman\fcharset0 Times-Roman;}
-{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
-{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
 \paperw11900\paperh16840\margl1440\margr1440\vieww21560\viewh12320\viewkind0
 \deftab720
 \pard\pardeftab720\partightenfactor0
@@ -21,10 +21,8 @@ uploaded_file = st.file_uploader("\uc0\u50641 \u49472  \u46608 \u45716  CSV \u54
 \
 if uploaded_file is not None:\
     try:\
-        # [\uc0\u49688 \u51221  \u54252 \u51064 \u53944 ] \u54028 \u51068  \u54805 \u49885 \u50640  \u44288 \u44228 \u50630 \u51060  \u50896 \u48376 \u51032  \u49345 \u45800  \u53440 \u51060 \u53952 /\u48712 \u54665 \u51012  \u47924 \u49884 \u54616 \u44256  \
-        # 'No.'\uc0\u44032  \u54252 \u54632 \u46108  \u51652 \u51676  \u54756 \u45908  \u54665 \u51012  \u51088 \u46041 \u51004 \u47196  \u52286 \u50500 \u49436  \u51069 \u50612 \u50724 \u45716  \u47196 \u51649  \u51201 \u50857 \
+        # [\uc0\u48372 \u50504  \u54252 \u51064 \u53944 ] \u54028 \u51068 \u51032  \u49892 \u51228  \u54805 \u53468 \u47484  \u48516 \u49437 \u54616 \u50668  \u50976 \u50672 \u54616 \u44172  \u54756 \u45908 \u47484  \u52286 \u45716  \u47196 \u51649 \
         if uploaded_file.name.endswith('.csv'):\
-            # CSV \uc0\u54028 \u51068 \u51064  \u44221 \u50864  \u50864 \u49440  \u47928 \u51088 \u50676 \u47196  \u51069 \u51008  \u46244  \u54756 \u45908  \u50948 \u52824  \u54028 \u50501 \
             lines = uploaded_file.getvalue().decode('utf-8').split('\\n')\
             skip_idx = 0\
             for i, line in enumerate(lines):\
@@ -34,7 +32,6 @@ if uploaded_file is not None:\
             uploaded_file.seek(0)\
             raw_df = pd.read_csv(uploaded_file, skiprows=skip_idx)\
         else:\
-            # Excel \uc0\u54028 \u51068 \u51064  \u44221 \u50864 \
             excel_file = pd.ExcelFile(uploaded_file)\
             sheet_df = excel_file.parse(excel_file.sheet_names[0], header=None)\
             skip_idx = 0\
@@ -44,14 +41,29 @@ if uploaded_file is not None:\
                     break\
             raw_df = excel_file.parse(excel_file.sheet_names[0], skiprows=skip_idx)\
         \
-        # \uc0\u54596 \u50836 \u54620  \u44277 \u53685  14\u44060  \u52972 \u47100 \u47564  \u49836 \u46972 \u51060 \u49905  \u48143  \u51060 \u47492  \u53685 \u51068 \
-        raw_df = raw_df.iloc[:, :14]\
-        raw_df.columns = [\
-            'No.', '\uc0\u44396 \u48516 ', '\u51228 \u54408 \u47749 ', '\u45812 \u45817 \u51088 ', '\u51228 \u54408  \u44396 \u48516 ', '\u52636 \u49884  \u47785 \u54364 ', \
-            '\uc0\u48176 \u54633 \u48708 ', '\u46356 \u51088 \u51064 ', '\u49884 \u49373 \u49328 ', '\u54252 \u51109 \u48156 \u51452 ', '\u50696 \u49345  \u52636 \u49884 ', '\u49464 \u48512  \u45236 \u50857 ', '\u49373 \u49328 \u52376 ', '\u51452 \u50836 \u52292 \u45328 '\
-        ]\
+        # [\uc0\u54645 \u49900  \u49688 \u51221 ] \u48320 \u54872  \u44284 \u51221 \u50640 \u49436  \u50676  \u44060 \u49688 \u44032  12\u44060  \u54841 \u51008  14\u44060  \u46321 \u51004 \u47196  \u48320 \u54616 \u45716  \u54788 \u49345  \u48169 \u50612 \
+        actual_col_count = len(raw_df.columns)\
         \
-        # \uc0\u45936 \u51060 \u53552  \u53364 \u47532 \u45789 : 'No.'\u50676 \u51060  \u48708 \u50612 \u51080 \u44144 \u45208  \u49707 \u51088 \u44032  \u50500 \u45772  \u54665 (\u50696 : \u54616 \u45800  \u44277 \u48177 , \u51473 \u44036  \u53440 \u51060 \u53952 ) \u51228 \u44144 \
+        # \uc0\u50526 \u50640 \u49436 \u48512 \u53552  \u44277 \u53685  \u52972 \u47100  \u51221 \u51032 \
+        base_columns = ['No.', '\uc0\u44396 \u48516 ', '\u51228 \u54408 \u47749 ', '\u45812 \u45817 \u51088 ', '\u51228 \u54408  \u44396 \u48516 ', '\u52636 \u49884  \u47785 \u54364 ']\
+        # \uc0\u46244 \u50640 \u49436 \u48512 \u53552  \u44277 \u53685  \u52972 \u47100  \u51221 \u51032  (\u50669 \u49692  \u49836 \u46972 \u51060 \u49905 \u51004 \u47196  \u50640 \u47084  \u48169 \u51648 )\
+        end_columns = ['\uc0\u50696 \u49345  \u52636 \u49884 ', '\u49464 \u48512  \u45236 \u50857 ', '\u49373 \u49328 \u52376 ', '\u51452 \u50836 \u52292 \u45328 ']\
+        \
+        # \uc0\u51473 \u44036 \u50640  '\u51652 \u54665  \u49324 \u54637 ' \u44288 \u47144  \u50676 \u51060  \u47751  \u44060 \u44032  \u45224 \u50520 \u46304  \u50976 \u50672 \u54616 \u44172  \u44208 \u54633 \
+        middle_count = actual_col_count - len(base_columns) - len(end_columns)\
+        middle_columns = [f'\uc0\u51652 \u54665 \u49324 \u54637 _\{i+1\}' for i in range(middle_count)]\
+        \
+        # \uc0\u52572 \u51333  \u52972 \u47100 \u47749  \u44053 \u51228  \u51201 \u50857  (\u44060 \u49688  \u48520 \u51068 \u52824  \u50896 \u52380  \u52264 \u45800 )\
+        final_columns = base_columns + middle_columns + end_columns\
+        raw_df.columns = final_columns\
+        \
+        # '\uc0\u49464 \u48512  \u45236 \u50857 '\u44284  '\u50696 \u49345  \u52636 \u49884 ' \u52972 \u47100 \u47749  \u47749 \u54869 \u55176  \u44256 \u51221 \
+        raw_df = raw_df.rename(columns=\{\
+            '\uc0\u50696 \u49345  \u52636 \u49884 ': '\u50696 \u49345  \u52636 \u49884 ',\
+            '\uc0\u49464 \u48512  \u45236 \u50857 ': '\u49464 \u48512  \u45236 \u50857 '\
+        \})\
+        \
+        # \uc0\u45936 \u51060 \u53552  \u53364 \u47532 \u45789 : 'No.'\u50676 \u51060  \u48708 \u50612 \u51080 \u44144 \u45208  \u49707 \u51088 \u44032  \u50500 \u45772  \u54665 (\u50696 : \u54616 \u45800  \u44277 \u48177 , \u51473 \u44036  \u54756 \u45908 ) \u51228 \u44144 \
         df = raw_df[pd.to_numeric(raw_df['No.'], errors='coerce').notna()].copy()\
         df['No.'] = df['No.'].astype(int)\
         \
@@ -60,9 +72,9 @@ if uploaded_file is not None:\
             expected = str(row['\uc0\u50696 \u49345  \u52636 \u49884 ']).strip()\
             target = str(row['\uc0\u52636 \u49884  \u47785 \u54364 ']).strip()\
             \
-            if '\uc0\u52636 \u49884 \u50756 \u47308 ' in expected:\
+            if '\uc0\u52636 \u49884 \u50756 \u47308 ' in expected or '\u50756 \u47308 ' in expected:\
                 return '\uc0\u52636 \u49884  \u50756 \u47308 '\
-            elif expected == '\uc0\u48120 \u51221 ' or target == '\u48120 \u51221 ' or expected == 'nan':\
+            elif expected == '\uc0\u48120 \u51221 ' or target == '\u48120 \u51221 ' or expected == 'nan' or not expected:\
                 return '\uc0\u48120 \u51221 '\
             elif target != expected:\
                 return '\uc0\u51648 \u50672 /\u47532 \u49828 \u53356 '\
@@ -76,6 +88,7 @@ if uploaded_file is not None:\
         completed = len(df[df['\uc0\u51652 \u54665 \u49345 \u53468 '] == '\u52636 \u49884  \u50756 \u47308 '])\
         in_progress = len(df[df['\uc0\u51652 \u54665 \u49345 \u53468 '] == '\u51221 \u49345  \u51652 \u54665 '])\
         delayed = len(df[df['\uc0\u51652 \u54665 \u49345 \u53468 '] == '\u51648 \u50672 /\u47532 \u49828 \u53356 '])\
+        undetermined = len(df[df['\uc0\u51652 \u54665 \u49345 \u53468 '] == '\u48120 \u51221 '])\
         \
         comp_rate = (completed / total_tasks * 100) if total_tasks > 0 else 0\
 \
@@ -103,19 +116,23 @@ if uploaded_file is not None:\
 \
         with col2:\
             st.subheader("\uc0\u55356 \u57173  \u44284 \u51228  \u50976 \u54805 \u48324  \u48708 \u51473  (\u49888 \u51228 \u54408  vs \u47532 \u45684 \u50620 )")\
-            type_df = df.groupby('\uc0\u51228 \u54408  \u44396 \u48516 ').size().reset_index(name='\u44148 \u49688 ')\
-            fig_pie = px.pie(\
-                type_df, values='\uc0\u44148 \u49688 ', names='\u51228 \u54408  \u44396 \u48516 ', hole=0.4,\
-                color_discrete_sequence=px.colors.qualitative.Pastel\
-            )\
-            fig_pie.update_traces(textinfo='percent+value')\
-            st.plotly_chart(fig_pie, use_container_width=True)\
+            if '\uc0\u51228 \u54408  \u44396 \u48516 ' in df.columns:\
+                type_df = df.groupby('\uc0\u51228 \u54408  \u44396 \u48516 ').size().reset_index(name='\u44148 \u49688 ')\
+                fig_pie = px.pie(\
+                    type_df, values='\uc0\u44148 \u49688 ', names='\u51228 \u54408  \u44396 \u48516 ', hole=0.4,\
+                    color_discrete_sequence=px.colors.qualitative.Pastel\
+                )\
+                fig_pie.update_traces(textinfo='percent+value')\
+                st.plotly_chart(fig_pie, use_container_width=True)\
+            else:\
+                st.info("\uc0\u48708 \u51473 \u51012  \u54364 \u49884 \u54624  '\u51228 \u54408  \u44396 \u48516 ' \u45936 \u51060 \u53552 \u44032  \u50630 \u49845 \u45768 \u45796 .")\
 \
         st.markdown("---")\
 \
         # 6. \uc0\u54616 \u45800  \u47532 \u49828 \u53356  \u51665 \u51473  \u44288 \u47532  \u49465 \u49496 \
         st.subheader("\uc0\u55357 \u57000  \u51060 \u48264  \u51452  \u51665 \u51473  \u44288 \u47532  \u51648 \u50672  \u44284 \u51228  \u47532 \u49828 \u53944 ")\
-        delay_df = df[df['\uc0\u51652 \u54665 \u49345 \u53468 '] == '\u51648 \u50672 /\u47532 \u49828 \u53356 '][['\u44396 \u48516 ', '\u51228 \u54408 \u47749 ', '\u45812 \u45817 \u51088 ', '\u52636 \u49884  \u47785 \u54364 ', '\u50696 \u49345  \u52636 \u49884 ', '\u49464 \u48512  \u45236 \u50857 ', '\u49373 \u49328 \u52376 ']]\
+        show_cols = [c for c in ['\uc0\u44396 \u48516 ', '\u51228 \u54408 \u47749 ', '\u45812 \u45817 \u51088 ', '\u52636 \u49884  \u47785 \u54364 ', '\u50696 \u49345  \u52636 \u49884 ', '\u49464 \u48512  \u45236 \u50857 ', '\u49373 \u49328 \u52376 '] if c in df.columns]\
+        delay_df = df[df['\uc0\u51652 \u54665 \u49345 \u53468 '] == '\u51648 \u50672 /\u47532 \u49828 \u53356 '][show_cols]\
         \
         if len(delay_df) > 0:\
             st.dataframe(\
