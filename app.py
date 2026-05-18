@@ -11,17 +11,25 @@ import streamlit as st\
 import pandas as pd\
 import plotly.express as px\
 \
-# 1. \uc0\u54168 \u51060 \u51648  \u44592 \u48376  \u49444 \u51221 \
+# 1. \uc0\u54168 \u51060 \u51648  \u44592 \u48376  \u49444 \u51221  \u48143  \u47785 \u50864 \u52492  \u53580 \u47560  \u49828 \u53440 \u51068  \u51221 \u51032 \
 st.set_page_config(page_title="\uc0\u49888 \u51228 \u54408  \u44060 \u48156  \u51652 \u52377  \u45824 \u49884 \u48372 \u46300 ", layout="wide")\
+\
+st.markdown("""\
+    <style>\
+    .main \{ background-color: #f8f9fa; \}\
+    h1 \{ color: #1e3a8a; font-weight: 700; \}\
+    </style>\
+""", unsafe_allow_html=True)\
+\
 st.title("\uc0\u55357 \u56522  [\u47560 \u52992 \u54021 \u48512 ] \u49888 \u51228 \u54408  \u44060 \u48156  \u51652 \u52377  \u54788 \u54889  \u45824 \u49884 \u48372 \u46300 ")\
-st.markdown("\uc0\u47588 \u51452  \u52712 \u54633 \u46104 \u45716  \u49888 \u51228 \u54408  \u44060 \u48156  \u54788 \u54889  \u54028 \u51068 \u51012  \u50629 \u47196 \u46300 \u54616 \u47732  \u49892 \u49884 \u44036 \u51004 \u47196  \u50836 \u50557  \u45936 \u51060 \u53552 \u50752  \u47532 \u49828 \u53356 \u47484  \u49884 \u44033 \u54868 \u54633 \u45768 \u45796 .")\
+st.markdown("\uc0\u47588 \u51452  \u52712 \u54633 \u46104 \u45716  \u49888 \u51228 \u54408  \u44060 \u48156  \u54788 \u54889  \u54028 \u51068 \u51012  \u50629 \u47196 \u46300 \u54616 \u47732  \u49324 \u51109 \u45784  \u48372 \u44256 \u50857  \u50836 \u50557  \u45936 \u51060 \u53552 \u50752  \u47532 \u49828 \u53356 \u47484  \u51593 \u49884  \u49884 \u44033 \u54868 \u54633 \u45768 \u45796 .")\
 \
 # 2. \uc0\u54028 \u51068  \u50629 \u47196 \u45908 \
 uploaded_file = st.file_uploader("\uc0\u50641 \u49472  \u46608 \u45716  CSV \u54028 \u51068 \u51012  \u50629 \u47196 \u46300 \u54616 \u49464 \u50836 .", type=["csv", "xlsx"])\
 \
 if uploaded_file is not None:\
     try:\
-        # [\uc0\u48372 \u50504  \u54252 \u51064 \u53944 ] \u54028 \u51068 \u51032  \u49892 \u51228  \u54805 \u53468 \u47484  \u48516 \u49437 \u54616 \u50668  \u50976 \u50672 \u54616 \u44172  \u54756 \u45908 \u47484  \u52286 \u45716  \u47196 \u51649 \
+        # \uc0\u54028 \u51068  \u54805 \u49885 \u50640  \u47582 \u52656  \u47924 \u51312 \u44148  'No.'\u50752  '\u51228 \u54408 \u47749 '\u51060  \u51080 \u45716  \u54665 \u51012  \u54756 \u45908 \u47196  \u52286 \u44592 \
         if uploaded_file.name.endswith('.csv'):\
             lines = uploaded_file.getvalue().decode('utf-8').split('\\n')\
             skip_idx = 0\
@@ -41,91 +49,86 @@ if uploaded_file is not None:\
                     break\
             raw_df = excel_file.parse(excel_file.sheet_names[0], skiprows=skip_idx)\
         \
-        # [\uc0\u54645 \u49900  \u49688 \u51221 ] \u48320 \u54872  \u44284 \u51221 \u50640 \u49436  \u50676  \u44060 \u49688 \u44032  12\u44060  \u54841 \u51008  14\u44060  \u46321 \u51004 \u47196  \u48320 \u54616 \u45716  \u54788 \u49345  \u48169 \u50612 \
-        actual_col_count = len(raw_df.columns)\
+        # \uc0\u45936 \u51060 \u53552  \u51221 \u51228  \u48143  \u52972 \u47100 \u47749  \u44053 \u51228  \u51204 \u52376 \u47532 \
+        raw_df = raw_df.dropna(subset=[raw_df.columns[0], raw_df.columns[2]]) # No\uc0\u50752  \u51228 \u54408 \u47749  \u50630 \u45716  \u54665  \u53448 \u46973 \
+        raw_df = raw_df[pd.to_numeric(raw_df = raw_df.iloc[:, 0], errors='coerce').notna()].copy()\
         \
-        # \uc0\u50526 \u50640 \u49436 \u48512 \u53552  \u44277 \u53685  \u52972 \u47100  \u51221 \u51032 \
+        actual_col_count = len(raw_df.columns)\
         base_columns = ['No.', '\uc0\u44396 \u48516 ', '\u51228 \u54408 \u47749 ', '\u45812 \u45817 \u51088 ', '\u51228 \u54408  \u44396 \u48516 ', '\u52636 \u49884  \u47785 \u54364 ']\
-        # \uc0\u46244 \u50640 \u49436 \u48512 \u53552  \u44277 \u53685  \u52972 \u47100  \u51221 \u51032  (\u50669 \u49692  \u49836 \u46972 \u51060 \u49905 \u51004 \u47196  \u50640 \u47084  \u48169 \u51648 )\
         end_columns = ['\uc0\u50696 \u49345  \u52636 \u49884 ', '\u49464 \u48512  \u45236 \u50857 ', '\u49373 \u49328 \u52376 ', '\u51452 \u50836 \u52292 \u45328 ']\
         \
-        # \uc0\u51473 \u44036 \u50640  '\u51652 \u54665  \u49324 \u54637 ' \u44288 \u47144  \u50676 \u51060  \u47751  \u44060 \u44032  \u45224 \u50520 \u46304  \u50976 \u50672 \u54616 \u44172  \u44208 \u54633 \
         middle_count = actual_col_count - len(base_columns) - len(end_columns)\
         middle_columns = [f'\uc0\u51652 \u54665 \u49324 \u54637 _\{i+1\}' for i in range(middle_count)]\
         \
-        # \uc0\u52572 \u51333  \u52972 \u47100 \u47749  \u44053 \u51228  \u51201 \u50857  (\u44060 \u49688  \u48520 \u51068 \u52824  \u50896 \u52380  \u52264 \u45800 )\
-        final_columns = base_columns + middle_columns + end_columns\
-        raw_df.columns = final_columns\
+        raw_df.columns = base_columns + middle_columns + end_columns\
         \
-        # '\uc0\u49464 \u48512  \u45236 \u50857 '\u44284  '\u50696 \u49345  \u52636 \u49884 ' \u52972 \u47100 \u47749  \u47749 \u54869 \u55176  \u44256 \u51221 \
-        raw_df = raw_df.rename(columns=\{\
-            '\uc0\u50696 \u49345  \u52636 \u49884 ': '\u50696 \u49345  \u52636 \u49884 ',\
-            '\uc0\u49464 \u48512  \u45236 \u50857 ': '\u49464 \u48512  \u45236 \u50857 '\
-        \})\
-        \
-        # \uc0\u45936 \u51060 \u53552  \u53364 \u47532 \u45789 : 'No.'\u50676 \u51060  \u48708 \u50612 \u51080 \u44144 \u45208  \u49707 \u51088 \u44032  \u50500 \u45772  \u54665 (\u50696 : \u54616 \u45800  \u44277 \u48177 , \u51473 \u44036  \u54756 \u45908 ) \u51228 \u44144 \
-        df = raw_df[pd.to_numeric(raw_df['No.'], errors='coerce').notna()].copy()\
+        # \uc0\u53581 \u49828 \u53944  \u45936 \u51060 \u53552  \u44277 \u48177  \u52397 \u49548 \
+        for col in raw_df.columns:\
+            if raw_df[col].dtype == 'object':\
+                raw_df[col] = raw_df[col].astype(str).str.strip()\
+                \
+        df = raw_df.copy()\
         df['No.'] = df['No.'].astype(int)\
         \
-        # 3. \uc0\u45936 \u51060 \u53552  \u49345 \u53468  \u48516 \u47448  \u47196 \u51649 \
+        # 3. \uc0\u45936 \u51060 \u53552  \u49345 \u53468  \u48516 \u47448  \u47196 \u51649  \u44256 \u46020 \u54868  (\u51221 \u48128  \u54596 \u53552 \u47553 )\
         def determine_status(row):\
-            expected = str(row['\uc0\u50696 \u49345  \u52636 \u49884 ']).strip()\
-            target = str(row['\uc0\u52636 \u49884  \u47785 \u54364 ']).strip()\
+            expected = str(row['\uc0\u50696 \u49345  \u52636 \u49884 '])\
+            target = str(row['\uc0\u52636 \u49884  \u47785 \u54364 '])\
+            detail = str(row['\uc0\u49464 \u48512  \u45236 \u50857 '])\
             \
             if '\uc0\u52636 \u49884 \u50756 \u47308 ' in expected or '\u50756 \u47308 ' in expected:\
                 return '\uc0\u52636 \u49884  \u50756 \u47308 '\
-            elif expected == '\uc0\u48120 \u51221 ' or target == '\u48120 \u51221 ' or expected == 'nan' or not expected:\
-                return '\uc0\u48120 \u51221 '\
-            elif target != expected:\
+            elif expected in ['\uc0\u48120 \u51221 ', 'nan', ''] or target in ['\u48120 \u51221 ', 'nan', '']:\
+                return '\uc0\u44060 \u48156  \u45824 \u44592 '\
+            elif target != expected and (detail != 'nan' and detail != ''):\
                 return '\uc0\u51648 \u50672 /\u47532 \u49828 \u53356 '\
             else:\
                 return '\uc0\u51221 \u49345  \u51652 \u54665 '\
             \
         df['\uc0\u51652 \u54665 \u49345 \u53468 '] = df.apply(determine_status, axis=1)\
 \
-        # 4. \uc0\u49345 \u45800  KPI \u49828 \u53076 \u50612 \u48372 \u46300  \u48176 \u52824 \
+        # 4. \uc0\u49345 \u45800  KPI \u49828 \u53076 \u50612 \u48372 \u46300 \
         total_tasks = len(df)\
         completed = len(df[df['\uc0\u51652 \u54665 \u49345 \u53468 '] == '\u52636 \u49884  \u50756 \u47308 '])\
         in_progress = len(df[df['\uc0\u51652 \u54665 \u49345 \u53468 '] == '\u51221 \u49345  \u51652 \u54665 '])\
         delayed = len(df[df['\uc0\u51652 \u54665 \u49345 \u53468 '] == '\u51648 \u50672 /\u47532 \u49828 \u53356 '])\
-        undetermined = len(df[df['\uc0\u51652 \u54665 \u49345 \u53468 '] == '\u48120 \u51221 '])\
+        waiting = len(df[df['\uc0\u51652 \u54665 \u49345 \u53468 '] == '\u44060 \u48156  \u45824 \u44592 '])\
         \
         comp_rate = (completed / total_tasks * 100) if total_tasks > 0 else 0\
 \
         kpi1, kpi2, kpi3, kpi4 = st.columns(4)\
         kpi1.metric("\uc0\u52509  \u44284 \u51228  \u49688 ", f"\{total_tasks\} \u44148 ")\
-        kpi2.metric("\uc0\u52636 \u49884  \u50756 \u47308 ", f"\{completed\} \u44148 ", f"\u45804 \u49457 \u47456  \{comp_rate:.1f\}%")\
+        kpi2.metric("\uc0\u52636 \u49884  \u50756 \u47308  \u55356 \u57225 ", f"\{completed\} \u44148 ", f"\u45804 \u49457 \u47456  \{comp_rate:.1f\}%")\
         kpi3.metric("\uc0\u51221 \u49345  \u51652 \u54665 ", f"\{in_progress\} \u44148 ")\
-        kpi4.metric("\uc0\u51648 \u50672  / \u47532 \u49828 \u53356  \u55357 \u57000 ", f"\{delayed\} \u44148 ", delta=f"-\{delayed\}\u44148  \u44288 \u47532  \u54596 \u50836 ", delta_color="inverse")\
+        kpi4.metric("\uc0\u51648 \u50672  / \u47532 \u49828 \u53356  \u55357 \u57000 ", f"\{delayed\} \u44148 ", delta=f"\{delayed\}\u44148  \u51665 \u51473 \u44288 \u47532 " if delayed > 0 else "\u47532 \u49828 \u53356  \u50630 \u51020 ", delta_color="inverse")\
 \
         st.markdown("---")\
 \
         # 5. \uc0\u52264 \u53944  \u49465 \u49496  (\u51340 \u50864  2\u48516 \u54624 )\
         col1, col2 = st.columns(2)\
 \
+        # \uc0\u44256 \u44553  \u52972 \u47084  \u47605 \u54609  \u51221 \u51032  (\u52636 \u49884 \u50756 \u47308 : \u44536 \u47536 , \u51221 \u49345 : \u48660 \u47336 , \u51648 \u50672 : \u47112 \u46300 , \u45824 \u44592 : \u54924 \u49353 )\
+        color_map = \{'\uc0\u52636 \u49884  \u50756 \u47308 ': '#2ecc71', '\u51221 \u49345  \u51652 \u54665 ': '#3498db', '\u51648 \u50672 /\u47532 \u49828 \u53356 ': '#e74c3c', '\u44060 \u48156  \u45824 \u44592 ': '#bdc3c7'\}\
+\
         with col1:\
-            st.subheader("\uc0\u55356 \u57314  \u48512 \u49436 \u48324  \u44284 \u51228  \u54788 \u54889 ")\
+            st.subheader("\uc0\u55356 \u57314  \u48512 \u49436 \u48324  \u44284 \u51228  \u51652 \u52377  \u54788 \u54889 ")\
             dept_df = df.groupby(['\uc0\u44396 \u48516 ', '\u51652 \u54665 \u49345 \u53468 ']).size().reset_index(name='\u44148 \u49688 ')\
             fig_dept = px.bar(\
                 dept_df, x='\uc0\u44396 \u48516 ', y='\u44148 \u49688 ', color='\u51652 \u54665 \u49345 \u53468 ', barmode='group',\
-                color_discrete_map=\{'\uc0\u52636 \u49884  \u50756 \u47308 ': '#2ecc71', '\u51221 \u49345  \u51652 \u54665 ': '#3498db', '\u51648 \u50672 /\u47532 \u49828 \u53356 ': '#e74c3c', '\u48120 \u51221 ': '#95a5a6'\},\
-                text_auto=True\
+                color_discrete_map=color_map, text_auto=True\
             )\
-            fig_dept.update_layout(xaxis_title=None, yaxis_title="\uc0\u44284 \u51228  \u49688 ")\
+            fig_dept.update_layout(xaxis_title=None, yaxis_title="\uc0\u44284 \u51228  \u49688 ", legend_title_text="\u51652 \u54665  \u49345 \u53468 ")\
             st.plotly_chart(fig_dept, use_container_width=True)\
 \
         with col2:\
             st.subheader("\uc0\u55356 \u57173  \u44284 \u51228  \u50976 \u54805 \u48324  \u48708 \u51473  (\u49888 \u51228 \u54408  vs \u47532 \u45684 \u50620 )")\
-            if '\uc0\u51228 \u54408  \u44396 \u48516 ' in df.columns:\
-                type_df = df.groupby('\uc0\u51228 \u54408  \u44396 \u48516 ').size().reset_index(name='\u44148 \u49688 ')\
-                fig_pie = px.pie(\
-                    type_df, values='\uc0\u44148 \u49688 ', names='\u51228 \u54408  \u44396 \u48516 ', hole=0.4,\
-                    color_discrete_sequence=px.colors.qualitative.Pastel\
-                )\
-                fig_pie.update_traces(textinfo='percent+value')\
-                st.plotly_chart(fig_pie, use_container_width=True)\
-            else:\
-                st.info("\uc0\u48708 \u51473 \u51012  \u54364 \u49884 \u54624  '\u51228 \u54408  \u44396 \u48516 ' \u45936 \u51060 \u53552 \u44032  \u50630 \u49845 \u45768 \u45796 .")\
+            type_df = df.groupby('\uc0\u51228 \u54408  \u44396 \u48516 ').size().reset_index(name='\u44148 \u49688 ')\
+            fig_pie = px.pie(\
+                type_df, values='\uc0\u44148 \u49688 ', names='\u51228 \u54408  \u44396 \u48516 ', hole=0.4,\
+                color_discrete_sequence=['#1abc9c', '#f1c40f', '#34495e']\
+            )\
+            fig_pie.update_traces(textinfo='percent+value', textfont_size=14)\
+            st.plotly_chart(fig_pie, use_container_width=True)\
 \
         st.markdown("---")\
 \
@@ -142,11 +145,11 @@ if uploaded_file is not None:\
                 hide_index=True\
             )\
         else:\
-            st.success("\uc0\u54788 \u51116  \u51648 \u50672 \u46108  \u44284 \u51228 \u44032  \u50630 \u49845 \u45768 \u45796 ! \u47784 \u46160  \u51221 \u49345  \u51652 \u54665  \u51473 \u51077 \u45768 \u45796 .")\
+            st.success("\uc0\u9989  \u54788 \u51116  \u51648 \u50672 \u46104 \u44144 \u45208  \u51060 \u49800 \u44032  \u48156 \u49373 \u54620  \u44284 \u51228 \u44032  \u50630 \u49845 \u45768 \u45796 . \u47784 \u46160  \u44228 \u54925 \u45824 \u47196  \u49692 \u54637  \u51473 \u51077 \u45768 \u45796 !")\
 \
         # 7. \uc0\u51204 \u52404  \u45936 \u51060 \u53552  \u51312 \u54924 \u50857  \u53580 \u51060 \u48660 \
-        with st.expander("\uc0\u55357 \u56589  \u51204 \u52404  \u45936 \u51060 \u53552  \u47532 \u49828 \u53944  \u54869 \u51064 \u54616 \u44592 "):\
+        with st.expander("\uc0\u55357 \u56589  \u51204 \u52404  \u45936 \u51060 \u53552  \u47532 \u49828 \u53944  \u54869 \u51064 \u54616 \u44592  (\u53364 \u47533  \u49884  \u51204 \u44060 )"):\
             st.dataframe(df.drop(columns=['\uc0\u51652 \u54665 \u49345 \u53468 ']), use_container_width=True, hide_index=True)\
 \
     except Exception as e:\
-        st.error(f"\uc0\u54028 \u51068 \u51012  \u51069 \u45716  \u51473  \u50724 \u47448 \u44032  \u48156 \u49373 \u54664 \u49845 \u45768 \u45796 . \u54028 \u51068  \u54805 \u49885 \u51012  \u54869 \u51064 \u54644  \u51452 \u49464 \u50836 . \u50724 \u47448  \u45236 \u50857 : \{e\}")}
+        st.error(f"\uc0\u54028 \u51068 \u51012  \u54028 \u49905 \u54616 \u45716  \u46020 \u51473  \u50724 \u47448 \u44032  \u48156 \u49373 \u54664 \u49845 \u45768 \u45796 . \u54028 \u51068  \u54805 \u49885 \u51012  \u45796 \u49884  \u54869 \u51064 \u54644  \u51452 \u49464 \u50836 . (\u50724 \u47448  \u47700 \u49884 \u51648 : \{e\})")}
