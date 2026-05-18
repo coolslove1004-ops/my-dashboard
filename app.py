@@ -11,7 +11,7 @@ import streamlit as st\
 import pandas as pd\
 import plotly.express as px\
 \
-# 1. \uc0\u54168 \u51060 \u51648  \u44592 \u48376  \u49444 \u51221  \u48143  \u47785 \u50864 \u52492  \u53580 \u47560  \u49828 \u53440 \u51068  \u51221 \u51032 \
+# 1. \uc0\u54168 \u51060 \u51648  \u44592 \u48376  \u49444 \u51221  \u48143  \u49828 \u53440 \u51068  \u51221 \u51032 \
 st.set_page_config(page_title="\uc0\u49888 \u51228 \u54408  \u44060 \u48156  \u51652 \u52377  \u45824 \u49884 \u48372 \u46300 ", layout="wide")\
 \
 st.markdown("""\
@@ -49,10 +49,14 @@ if uploaded_file is not None:\
                     break\
             raw_df = excel_file.parse(excel_file.sheet_names[0], skiprows=skip_idx)\
         \
-        # \uc0\u45936 \u51060 \u53552  \u51221 \u51228  \u48143  \u52972 \u47100 \u47749  \u44053 \u51228  \u51204 \u52376 \u47532 \
-        raw_df = raw_df.dropna(subset=[raw_df.columns[0], raw_df.columns[2]]) # No\uc0\u50752  \u51228 \u54408 \u47749  \u50630 \u45716  \u54665  \u53448 \u46973 \
-        raw_df = raw_df[pd.to_numeric(raw_df = raw_df.iloc[:, 0], errors='coerce').notna()].copy()\
+        # [\uc0\u50724 \u47448  \u49688 \u51221  \u54252 \u51064 \u53944 ] \u45936 \u51060 \u53552  \u51221 \u51228  \u47196 \u51649  \u50504 \u51221 \u54868 \
+        # \uc0\u52395  \u48264 \u51704  \u50676 \u44284  \u49464  \u48264 \u51704  \u50676 \u51060  \u48708 \u50612 \u51080 \u51648  \u50506 \u51008  \u54665 \u47564  \u54596 \u53552 \u47553 \
+        raw_df = raw_df.dropna(subset=[raw_df.columns[0], raw_df.columns[2]])\
         \
+        # \uc0\u52395  \u48264 \u51704  \u50676 (No.)\u51060  \u49707 \u51088 \u47196  \u48320 \u54872  \u44032 \u45733 \u54620  \u54665 \u47564  \u45224 \u44592 \u44592  (\u51473 \u44036  \u53440 \u51060 \u53952  \u48143  \u44277 \u48177  \u51228 \u44144 )\
+        raw_df = raw_df[pd.to_numeric(raw_df.iloc[:, 0], errors='coerce').notna()].copy()\
+        \
+        # \uc0\u46041 \u51201  \u52972 \u47100  \u48148 \u51064 \u46377 \
         actual_col_count = len(raw_df.columns)\
         base_columns = ['No.', '\uc0\u44396 \u48516 ', '\u51228 \u54408 \u47749 ', '\u45812 \u45817 \u51088 ', '\u51228 \u54408  \u44396 \u48516 ', '\u52636 \u49884  \u47785 \u54364 ']\
         end_columns = ['\uc0\u50696 \u49345  \u52636 \u49884 ', '\u49464 \u48512  \u45236 \u50857 ', '\u49373 \u49328 \u52376 ', '\u51452 \u50836 \u52292 \u45328 ']\
@@ -70,7 +74,7 @@ if uploaded_file is not None:\
         df = raw_df.copy()\
         df['No.'] = df['No.'].astype(int)\
         \
-        # 3. \uc0\u45936 \u51060 \u53552  \u49345 \u53468  \u48516 \u47448  \u47196 \u51649  \u44256 \u46020 \u54868  (\u51221 \u48128  \u54596 \u53552 \u47553 )\
+        # 3. \uc0\u45936 \u51060 \u53552  \u49345 \u53468  \u48516 \u47448  \u47196 \u51649 \
         def determine_status(row):\
             expected = str(row['\uc0\u50696 \u49345  \u52636 \u49884 '])\
             target = str(row['\uc0\u52636 \u49884  \u47785 \u54364 '])\
@@ -92,7 +96,6 @@ if uploaded_file is not None:\
         completed = len(df[df['\uc0\u51652 \u54665 \u49345 \u53468 '] == '\u52636 \u49884  \u50756 \u47308 '])\
         in_progress = len(df[df['\uc0\u51652 \u54665 \u49345 \u53468 '] == '\u51221 \u49345  \u51652 \u54665 '])\
         delayed = len(df[df['\uc0\u51652 \u54665 \u49345 \u53468 '] == '\u51648 \u50672 /\u47532 \u49828 \u53356 '])\
-        waiting = len(df[df['\uc0\u51652 \u54665 \u49345 \u53468 '] == '\u44060 \u48156  \u45824 \u44592 '])\
         \
         comp_rate = (completed / total_tasks * 100) if total_tasks > 0 else 0\
 \
@@ -106,8 +109,6 @@ if uploaded_file is not None:\
 \
         # 5. \uc0\u52264 \u53944  \u49465 \u49496  (\u51340 \u50864  2\u48516 \u54624 )\
         col1, col2 = st.columns(2)\
-\
-        # \uc0\u44256 \u44553  \u52972 \u47084  \u47605 \u54609  \u51221 \u51032  (\u52636 \u49884 \u50756 \u47308 : \u44536 \u47536 , \u51221 \u49345 : \u48660 \u47336 , \u51648 \u50672 : \u47112 \u46300 , \u45824 \u44592 : \u54924 \u49353 )\
         color_map = \{'\uc0\u52636 \u49884  \u50756 \u47308 ': '#2ecc71', '\u51221 \u49345  \u51652 \u54665 ': '#3498db', '\u51648 \u50672 /\u47532 \u49828 \u53356 ': '#e74c3c', '\u44060 \u48156  \u45824 \u44592 ': '#bdc3c7'\}\
 \
         with col1:\
